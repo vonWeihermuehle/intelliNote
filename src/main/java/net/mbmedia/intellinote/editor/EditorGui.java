@@ -15,10 +15,13 @@ public class EditorGui extends BaseGui {
     private final JTextArea textArea;
 
     public EditorGui() {
+        JPanel container = new JPanel(new BorderLayout());
+
+
         textArea = new JTextArea("", 0, 0);
         textArea.setTabSize(2);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(false);
+        textArea.setWrapStyleWord(false);
         textArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -26,8 +29,13 @@ public class EditorGui extends BaseGui {
             }
         });
 
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setViewportView(textArea);
+        JTextLineNumber lineNumbers = new JTextLineNumber(textArea);
+
+        container.add(textArea, BorderLayout.CENTER);
+        container.add(lineNumbers, BorderLayout.WEST);
+
+        JScrollPane scrollPane = new JScrollPane(container);
+        scrollPane.setViewportView(container);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         this.setLayout(new BorderLayout());
 
