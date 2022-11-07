@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static com.formdev.flatlaf.util.StringUtils.isEmpty;
 import static javax.swing.JOptionPane.*;
 import static net.mbmedia.intellinote.util.ResourceUtil.getResourceString;
 
@@ -47,7 +48,7 @@ public class RightClickListener extends MouseAdapter {
         JPopupMenu menu = new JPopupMenu();
         JMenuItem addItem = new JMenuItem(getResourceString("add_label"));
         addItem.addActionListener(e -> {
-            JDialog dialog = createAddWindow();
+            JDialog dialog = createEditWindow();
             if (mouseEvent != null) {
                 dialog.setLocation(mouseEvent.getX(), mouseEvent.getY());
             }
@@ -59,7 +60,7 @@ public class RightClickListener extends MouseAdapter {
             Object[] options = {getResourceString("option_yes"), getResourceString("option_cancel")};
             int question = showOptionDialog(parent, getResourceString("question_remove_all_entries"), getResourceString("question_remove_all_title"),
                     YES_NO_CANCEL_OPTION, QUESTION_MESSAGE, null, options, options[1]);
-            if(question == OK_OPTION){
+            if (question == OK_OPTION) {
                 ((DefaultListModel<?>) list.getModel()).clear();
             }
         });
@@ -72,14 +73,32 @@ public class RightClickListener extends MouseAdapter {
             return menu;
         }
 
+        JMenuItem editItem = new JMenuItem(getResourceString("edit_label"));
+        editItem.addActionListener(e -> {
+            String text = (String) ((DefaultListModel<?>) list.getModel()).elementAt(index);
+
+            JDialog dialog = createEditWindow(text, index);
+            if (mouseEvent != null) {
+                dialog.setLocation(mouseEvent.getX(), mouseEvent.getY());
+            }
+            dialog.setVisible(true);
+        });
+
         JMenuItem removeItem = new JMenuItem(getResourceString("remove_label"));
         removeItem.addActionListener(e -> ((DefaultListModel<?>) list.getModel()).remove(index));
+
+        menu.add(editItem);
         menu.add(removeItem);
 
         return menu;
     }
 
-    private JDialog createAddWindow() {
+    private JDialog createEditWindow() {
+        return createEditWindow("", -1);
+    }
+
+    private JDialog createEditWindow(String text, int index) {
+        boolean isCreateMode = isEmpty(text);
         JDialog dialog = new JDialog(parent);
         dialog.setTitle(getResourceString("add_dialog_label"));
         dialog.setModal(true);
@@ -87,12 +106,19 @@ public class RightClickListener extends MouseAdapter {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         JTextArea textArea = new JTextArea();
+        textArea.setText(text);
         textArea.setTabSize(1);
         panel.add(textArea);
         JButton save = new JButton(getResourceString("button_label_save"));
         save.addActionListener(e -> {
             if (!textArea.getText().isEmpty()) {
-                ((DefaultListModel<String>) list.getModel()).add(list.getModel().getSize(), textArea.getText());
+                if (isCreateMode) {
+                    ((DefaultListModel<String>) list.getModel()).add(list.getModel().getSize(), textArea.getText());
+                } else {
+                    DefaultListModel<String> model = (DefaultListModel<String>) list.getModel();
+                    model.removeElementAt(index);
+                    model.add(index, textArea.getText());
+                }
             }
             dialog.dispose();
         });
