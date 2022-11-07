@@ -53,7 +53,9 @@ public class DataLoader {
     public void loadFile(String filepath) {
         File file = new File(filepath);
         if (!file.exists()) {
-            throw new RuntimeException("File doesnt exist: " + filepath);
+            System.out.println("File doesnt exist: " + filepath);
+            gui.setChosenFile(null);
+            return;
         }
         gui.setChosenFile(file);
         try {
