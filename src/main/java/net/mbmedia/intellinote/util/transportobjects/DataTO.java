@@ -43,10 +43,10 @@ public class DataTO implements Serializable {
     }
 
     private String encode(String toEncode){
-        return Base64.getEncoder().encodeToString(toEncode.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(toEncode.getBytes(StandardCharsets.ISO_8859_1));
     }
 
     private String decode(String toDecode){
-        return new String(Base64.getDecoder().decode(toDecode));
+        return new String(Base64.getDecoder().decode(toDecode), StandardCharsets.ISO_8859_1);
     }
 }

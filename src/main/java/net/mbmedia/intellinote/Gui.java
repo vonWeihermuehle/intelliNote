@@ -12,10 +12,12 @@ import net.mbmedia.intellinote.util.transportobjects.SettingsTO;
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -81,6 +83,16 @@ public class Gui extends JFrame {
         }
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         startAutoSavingThread();
+
+        ArrayList<Image> images = new ArrayList<>();
+        images.add(getImage("icon-32.png"));
+        images.add(getImage("icon-64.png"));
+        images.add(getImage("icon-128.png"));
+        this.setIconImages(images);
+    }
+
+    private Image getImage(String name){
+        return Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/" + name));
     }
 
     public JMenuBar createMenuBar() {
